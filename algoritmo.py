@@ -30,6 +30,7 @@ def juega(tablero, posicion):
             c=c+1
     if f!=-1:
         posicion[0]=f
+
         posicion[1]=c
     ####################################################
 
