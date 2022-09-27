@@ -1,9 +1,9 @@
 class Nodo:
-    def __init__(self, tablero, mini):
+    def __init__(self, tablero, maxi):
         self.tablero = tablero
         self.nodoSiguientes = []
         self.valor = -1
-        self.mini = mini
+        self.maxi = maxi
 
     def getTablero(self):
         return self.tablero
@@ -17,11 +17,11 @@ class Nodo:
     def getValor(self):
         return self.valor
 
-    def getIsMin(self):
-        return self.mini
+    def getIsMaxi(self):
+        return self.maxi
 
-    def setIsMin(self, mini):
-        self.mini = mini
+    def setIsMaxi(self, maxi):
+        self.maxi = maxi
 
 
 

@@ -45,7 +45,7 @@ def main():
 
                     #Si el arbol esta vacio se le agreaga el nodo raiz
                     if arbol.isEmpty():
-                        nodoActual = Nodo(tablero, False)
+                        nodoActual = Nodo(tablero, True)
                         arbol.setNodoRaiz(nodoActual)
                         #arbol.getNodoRaiz().setNodoSiguientes(possibleSolutions(nodoActual))
                         minimax(nodoActual, 2, True)

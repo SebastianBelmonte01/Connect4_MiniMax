@@ -45,13 +45,13 @@ def possibleSolutions(nodo):
                 print('Column', column)
                 #Si el nodo es min el hijo debera ser el contrario
                 #Turno de la IA
-                if nodo.mini == False:
+                if nodo.maxi == True:
                     auxTablero.setCelda(row, column, 2)
-                    nodoHijo = Nodo(auxTablero, True)
+                    nodoHijo = Nodo(auxTablero, False)
                 #Turno de la persona
                 else:
                     auxTablero.setCelda(row, column, 1)
-                    nodoHijo = Nodo(auxTablero, False)
+                    nodoHijo = Nodo(auxTablero, True)
                 auxNodo = copy.deepcopy(nodoHijo)
                 nodosSiguientes.append(auxNodo)
                 nodoHijo.tablero.setCelda(row, column, 0)
@@ -62,7 +62,8 @@ def possibleSolutions(nodo):
 
 def minimax(nodo, profundidad, maxi):
     print('PROFUNDIDAD ', profundidad)
-    if profundidad == 0:
+    if profundidad == 0 or nodo.tablero.cuatroEnRaya():
+        #Debe retornar calcular la funcion de evaluacion
         return nodo
     if maxi:
         maxEval = - math.inf
@@ -76,6 +77,33 @@ def minimax(nodo, profundidad, maxi):
             eval = minimax(child, profundidad - 1, True)
             #minEval = min(minEval, eval)
         return minEval
+
+#def evaluationFunction():
+'''
+Funcion que retorna un valor dependiendo de la cantidad de piezas
+horizontalemnte en el tablero
+  '''
+
+
+'''
+def busquedaHorizontal(nodo, profundidad, isMax):
+    res = 0
+    for column in range(nodo.getTablero().getAlto()):
+        for row in range(nodo.getTablero().getAncho()):
+            if nodo.maxi() == isMax:
+                res += 25
+
+'''
+
+
+
+
+
+
+
+
+
+
 
 
 
