@@ -45,13 +45,12 @@ def main():
 
                     #Si el arbol esta vacio se le agreaga el nodo raiz
                     if arbol.isEmpty():
-                        nodoActual = Nodo(tablero, True)
+                        nodoActual = Nodo(tablero, True, fila, col)
                         arbol.setNodoRaiz(nodoActual)
                         #arbol.getNodoRaiz().setNodoSiguientes(possibleSolutions(nodoActual))
                         minimax(nodoActual, 2, True)
                     #else:
-                        #Se debe iterar cada uno de los nodos hijos y encontrar sus posibles solciones
-
+                        #Se debe generar el arbol con el nodo padre actuak
 
                 if tablero.cuatroEnRaya()==1:
                     game_over=True

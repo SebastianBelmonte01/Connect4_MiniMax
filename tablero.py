@@ -50,7 +50,7 @@ class Tablero:
         while not fin and i<self.getAlto():
             j=0
             while not fin and j<self.getAncho():
-                casilla=self.getCelda(i,j)
+                casilla = self.getCelda(i,j)
                 if casilla!=0:
                     #búsqueda en horizontal
                     if (j+3) <self.getAncho():

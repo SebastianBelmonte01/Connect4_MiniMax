@@ -1,9 +1,13 @@
 class Nodo:
-    def __init__(self, tablero, maxi):
+    def __init__(self, tablero, maxi, x, y):
         self.tablero = tablero
         self.nodoSiguientes = []
-        self.valor = -1
+        self.valor = 0
+        #Maxi es la IA
         self.maxi = maxi
+
+        self.x = x
+        self.y = y
 
     def getTablero(self):
         return self.tablero
@@ -22,7 +26,16 @@ class Nodo:
 
     def setIsMaxi(self, maxi):
         self.maxi = maxi
+    def setX(self, x):
+        self.x = x
 
+    def setY(self, y):
+        self.y = y
 
+    def getX(self):
+        return self.x
+
+    def getY(self):
+        return self.y
 
 
