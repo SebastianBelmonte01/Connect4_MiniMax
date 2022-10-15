@@ -5,15 +5,18 @@ class Nodo:
         self.valor = 0
         #Maxi es la IA
         self.maxi = maxi
-
         self.x = x
         self.y = y
+
 
     def getTablero(self):
         return self.tablero
 
     def setNodoSiguientes(self, nodos):
         self.nodoSiguientes = nodos
+    def getNodoSiguientes(self, pos):
+        return self.nodoSiguientes[pos]
+
 
     def setValor(self, valor):
         self.valor = valor
@@ -37,5 +40,13 @@ class Nodo:
 
     def getY(self):
         return self.y
+    def getNodosSiguientes(self):
+        return self.nodoSiguientes
+
+    def setIndiceSiguienteMovimeinto(self, indice):
+        self.indiceSiguienteMovimiento = indice
+
+    def getIndiceSiguienteMovimiento(self):
+        return self.indiceSiguienteMovimiento
 
 

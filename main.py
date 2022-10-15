@@ -4,91 +4,114 @@ from algoritmo import *
 from pygame.locals import *
 from arbol import *
 
-MARGEN=20
-ROJO=(255, 0, 0)
-AZUL=(0, 0, 255)
-AMARILLO=(255, 255, 0)
-NEGRO=(0,0,0)
-BLANCO=(255, 255, 255)
-TAM=60
+MARGEN = 20
+ROJO = (255, 0, 0)
+AZUL = (0, 0, 255)
+AMARILLO = (255, 255, 0)
+NEGRO = (0, 0, 0)
+BLANCO = (255, 255, 255)
+TAM = 60
+
 
 def main():
     pygame.init()
-    
-    reloj=pygame.time.Clock()
-    screen=pygame.display.set_mode([700, 620])
+
+    reloj = pygame.time.Clock()
+    screen = pygame.display.set_mode([700, 620])
     pygame.display.set_caption("Belmonte Sebastian - Practica 1")
 
-    #Intancia de Arbol
-    arbol = Arbol()
-    #Nodo Actual
-    nodoActual = None
-    #Nodo Anterior
-    nodoAnterior = None
-    
-    game_over=False
-    tablero=Tablero(None)
-    col=-1
+    # Intancia de Arbol
+    arbol = Arbol(5)
+    # Nodo Actual
+    nodoRaiz = None
+    # Nodo Anterior
+    nuevo = None
+    next_move = 0
+
+    game_over = False
+    tablero = Tablero(None)
+    col = -1
     while not game_over:
         for event in pygame.event.get():
-            if event.type==pygame.QUIT:               
-                game_over=True
-            if event.type==pygame.MOUSEBUTTONDOWN:                
-                #obtener posición y calcular coordenadas matriciales
-                #juega persona, comprobar casilla y actualizar tablero
-                pos=pygame.mouse.get_pos()  
-                colDestino=(pos[0]-(2*MARGEN))//(TAM+MARGEN)             
-                #comprobar que es una posición válida
-                fila=busca(tablero, colDestino)
-                if fila!=-1:                    
+            if event.type == pygame.QUIT:
+                game_over = True
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # obtener posición y calcular coordenadas matriciales
+                # juega persona, comprobar casilla y actualizar tablero
+                pos = pygame.mouse.get_pos()
+                colDestino = (pos[0] - (2 * MARGEN)) // (TAM + MARGEN)
+                # comprobar que es una posición válida
+                fila = busca(tablero, colDestino)
+                if fila != -1:
+                    # Si el arbol esta vacio se le agreaga el nodo raiz
                     tablero.setCelda(fila, colDestino, 1)
+                    nodoRaiz = Nodo(tablero, True, fila, col)
+                    arbol.setNodoRaiz(nodoRaiz)
+                    abrir = 0
+                    abrir += 1
+                    print(abrir)
+                    # arbol.getNodoRaiz().setNodoSiguientes(possibleSolutions(nodoRaiz))
+                    print("===========================================================")
+                    print("===========================================================")
+                    print("===========================================================")
+                    print("===========================================================")
+                    print("===========================================================")
+                    print("===========================================================")
+                    minimax(nodoRaiz, arbol.getProfundiad(), nodoRaiz.getIsMaxi())
+                    next_move = arbol.siguienteMovimiento()
+                    nodoRaiz = nodoRaiz.getNodoSiguientes(next_move)
+                    print("Nuevo Valor: ", nodoRaiz.getValor())
+                    print("Tablero Ganador")
+                    print("Valor: ", nodoRaiz.getValor())
+                    print(nodoRaiz.getTablero())
 
-                    #Si el arbol esta vacio se le agreaga el nodo raiz
-                    if arbol.isEmpty():
-                        nodoActual = Nodo(tablero, True, fila, col)
-                        arbol.setNodoRaiz(nodoActual)
-                        #arbol.getNodoRaiz().setNodoSiguientes(possibleSolutions(nodoActual))
-                        minimax(nodoActual, 2, True)
-                    #else:
-                        #Se debe generar el arbol con el nodo padre actuak
+                if tablero.cuatroEnRaya() == 1:
+                    game_over = True
+                    print("gana persona")
+                else:  # si la persona no ha ganado, juega la máquina
+                    #posicion = [-1, -1]
+                    #juega(tablero, posicion)
+                    #Se debe obtener el nodo siguiente y las coordenadas del mismo
+                    #print('NUEVO', nuevo.getIndiceSiguienteMovimiento())
+                    #tablero.setCelda(nuevo.getNodoSiguientes(nuevo.getIndiceSiguienteMovimiento()).getX(), nuevo.getNodoSiguiente(nuevo.getIndiceSiguienteMovimiento()).getY(), 2)
+                    tablero.setCelda(nodoRaiz.getX(), nodoRaiz.getY(), 2)
 
-                if tablero.cuatroEnRaya()==1:
-                    game_over=True
-                    print ("gana persona")               
-                else:  #si la persona no ha ganado, juega la máquina 
-                    posicion=[-1,-1]
-                    juega(tablero, posicion)                
-                    tablero.setCelda(posicion[0], posicion[1], 2)                    
-                    if tablero.cuatroEnRaya()==2:
-                        game_over=True
-                        print ("gana máquina")
+                    if tablero.cuatroEnRaya() == 2:
+                        game_over = True
+                        print("gana máquina")
 
-                nodoAnterior = nodoActual
-            
-        #código de dibujo        
-        #limpiar pantalla
+
+        # código de dibujo
+        # limpiar pantalla
         screen.fill(NEGRO)
-        pygame.draw.rect(screen, AZUL, [MARGEN, MARGEN, 660, 580],0)
+        pygame.draw.rect(screen, AZUL, [MARGEN, MARGEN, 660, 580], 0)
         for fil in range(tablero.getAlto()):
             for col in range(tablero.getAncho()):
-                if tablero.getCelda(fil, col)==0: 
-                    pygame.draw.ellipse(screen, BLANCO, [(TAM+MARGEN)*col+2*MARGEN, (TAM+MARGEN)*fil+2*MARGEN, TAM, TAM], 0)
-                elif tablero.getCelda(fil, col)==1: 
-                    pygame.draw.ellipse(screen, ROJO, [(TAM+MARGEN)*col+2*MARGEN, (TAM+MARGEN)*fil+2*MARGEN, TAM, TAM], 0)
+                if tablero.getCelda(fil, col) == 0:
+                    pygame.draw.ellipse(screen, BLANCO,
+                                        [(TAM + MARGEN) * col + 2 * MARGEN, (TAM + MARGEN) * fil + 2 * MARGEN, TAM,
+                                         TAM], 0)
+                elif tablero.getCelda(fil, col) == 1:
+                    pygame.draw.ellipse(screen, ROJO,
+                                        [(TAM + MARGEN) * col + 2 * MARGEN, (TAM + MARGEN) * fil + 2 * MARGEN, TAM,
+                                         TAM], 0)
                 else:
-                    pygame.draw.ellipse(screen, AMARILLO, [(TAM+MARGEN)*col+2*MARGEN, (TAM+MARGEN)*fil+2*MARGEN, TAM, TAM], 0)                
-                        
+                    pygame.draw.ellipse(screen, AMARILLO,
+                                         [(TAM + MARGEN) * col + 2 * MARGEN, (TAM + MARGEN) * fil + 2 * MARGEN, TAM,
+                                         TAM], 0)
+
         for col in range(tablero.getAncho()):
-            pygame.draw.rect(screen, BLANCO, [(TAM+MARGEN)*col+2*MARGEN, 10, TAM, 10],0)
-            
-        #actualizar pantalla
+            pygame.draw.rect(screen, BLANCO, [(TAM + MARGEN) * col + 2 * MARGEN, 10, TAM, 10], 0)
+
+        # actualizar pantalla
         pygame.display.flip()
         reloj.tick(40)
-        if game_over==True: #retardo cuando gana
+        if game_over == True:  # retardo cuando gana
             pygame.time.delay(1500)
-    
+
     pygame.quit()
- 
-if __name__=="__main__":
+
+
+if __name__ == "__main__":
     main()
- 
+
