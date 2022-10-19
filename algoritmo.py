@@ -21,26 +21,6 @@ def busca(tablero, col):
     return i
 
 
-# llama al algoritmo que decide la jugada
-def juega(tablero, posicion):
-    ####################################################
-    ## sustituir este código por la llamada al algoritmo
-
-    enc = False
-    c = 0
-    while not enc and c < tablero.getAncho():
-        f = busca(tablero, c)
-        if f != -1:
-            enc = True
-        else:
-            c = c + 1
-    if f != -1:
-        posicion[0] = f
-
-        posicion[1] = c
-    ####################################################
-
-
 # Devuelve un arreglo de nodos con las posibles soluciones de dicho nodo
 def possibleSolutions(nodo):
     nodosSiguientes = []
@@ -67,16 +47,24 @@ def possibleSolutions(nodo):
 def minimax(nodo, profundidad, maxi):
     nodo.setNodoSiguientes(possibleSolutions(nodo))
     if profundidad == 0 or nodo.getTablero().cuatroEnRaya():
+        print("Profundidad 0 ")
+        print("Nodo Valor: ", nodo.getValor())
         return nodo
     if maxi:
         value = - math.inf
         for child in nodo.getNodosSiguientes():
             leaf = minimax(child, profundidad - 1, child.getIsMaxi())
             evalu = evaluation(leaf)
-
+            print("max")
+            print("evalu: ", evalu)
             if value < evalu:
+                print("Entra un valor: ")
+                print(nodo)
                 value = evalu
                 nodo.setValor(value)
+            leaf.setValor(evalu)
+            print("value: ", value)
+
         print("=========================Termino FAMILIA===================================")
         return nodo
     else:
@@ -84,9 +72,16 @@ def minimax(nodo, profundidad, maxi):
         for child in nodo.getNodosSiguientes():
             leaf = minimax(child, profundidad - 1, child.getIsMaxi())
             evalu = evaluation(leaf)
+            print("min")
+            print("evalu: ", evalu)
             if value > evalu:
+                print("Entra un valor: ")
+                print(nodo)
                 value = evalu
                 nodo.setValor(value)
+            leaf.setValor(evalu)
+            print("value: ", value)
+
         print("=========================Termino FAMILIA===================================")
         return nodo
 
@@ -144,12 +139,24 @@ def transformarTablero(nodo):
 
 def evaluarVentana(window, pieza, opp):
     puntuacion = 0
-    if window.count(pieza) == 4:
-        puntuacion += 100000
-    elif window.count(pieza) == 3 and window.count(0) == 1:
-        puntuacion += 5
-    elif window.count(pieza) == 2 and window.count(0) == 2:
-        puntuacion += 3
-    if window.count(opp) == 3 and window.count(0) == 1:
-        puntuacion -= 4
+    if pieza == 2:
+        if window.count(pieza) == 4:
+            puntuacion += 1000
+        elif window.count(pieza) == 3 and window.count(0) == 1:
+            puntuacion += 2
+        elif window.count(pieza) == 2 and window.count(0) == 2:
+            puntuacion += 1
+        if window.count(opp) == 3 and window.count(0) == 1:
+            puntuacion -= 10
+        if window.count(opp) == 2 and window.count(0) == 2:
+            puntuacion -= 5
+    else:
+        if window.count(pieza) == 4:
+            puntuacion -= 100
+        elif window.count(pieza) == 3 and window.count(0) == 1:
+            puntuacion -= 2
+        elif window.count(pieza) == 2 and window.count(0) == 2:
+            puntuacion -= 1
+        if window.count(opp) == 3 and window.count(0) == 1:
+            puntuacion += 100
     return puntuacion

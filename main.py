@@ -10,6 +10,7 @@ AZUL = (0, 0, 255)
 AMARILLO = (255, 255, 0)
 NEGRO = (0, 0, 0)
 BLANCO = (255, 255, 255)
+NARANJA = (254, 115, 28)
 TAM = 60
 
 
@@ -21,7 +22,7 @@ def main():
     pygame.display.set_caption("Belmonte Sebastian - Practica 1")
 
     # Intancia de Arbol
-    arbol = Arbol(5)
+    arbol = Arbol(4)
     # Nodo Actual
     nodoRaiz = None
     # Nodo Anterior
@@ -47,22 +48,11 @@ def main():
                     tablero.setCelda(fila, colDestino, 1)
                     nodoRaiz = Nodo(tablero, True, fila, col)
                     arbol.setNodoRaiz(nodoRaiz)
-                    abrir = 0
-                    abrir += 1
-                    print(abrir)
                     # arbol.getNodoRaiz().setNodoSiguientes(possibleSolutions(nodoRaiz))
-                    print("===========================================================")
-                    print("===========================================================")
-                    print("===========================================================")
-                    print("===========================================================")
-                    print("===========================================================")
-                    print("===========================================================")
                     minimax(nodoRaiz, arbol.getProfundiad(), nodoRaiz.getIsMaxi())
                     next_move = arbol.siguienteMovimiento()
+                    print("Nodo RAIZ VALOR: ", nodoRaiz.getValor())
                     nodoRaiz = nodoRaiz.getNodoSiguientes(next_move)
-                    print("Nuevo Valor: ", nodoRaiz.getValor())
-                    print("Tablero Ganador")
-                    print("Valor: ", nodoRaiz.getValor())
                     print(nodoRaiz.getTablero())
 
                 if tablero.cuatroEnRaya() == 1:
@@ -75,12 +65,9 @@ def main():
                     #print('NUEVO', nuevo.getIndiceSiguienteMovimiento())
                     #tablero.setCelda(nuevo.getNodoSiguientes(nuevo.getIndiceSiguienteMovimiento()).getX(), nuevo.getNodoSiguiente(nuevo.getIndiceSiguienteMovimiento()).getY(), 2)
                     tablero.setCelda(nodoRaiz.getX(), nodoRaiz.getY(), 2)
-
                     if tablero.cuatroEnRaya() == 2:
                         game_over = True
                         print("gana máquina")
-
-
         # código de dibujo
         # limpiar pantalla
         screen.fill(NEGRO)
@@ -99,7 +86,6 @@ def main():
                     pygame.draw.ellipse(screen, AMARILLO,
                                          [(TAM + MARGEN) * col + 2 * MARGEN, (TAM + MARGEN) * fil + 2 * MARGEN, TAM,
                                          TAM], 0)
-
         for col in range(tablero.getAncho()):
             pygame.draw.rect(screen, BLANCO, [(TAM + MARGEN) * col + 2 * MARGEN, 10, TAM, 10], 0)
 
