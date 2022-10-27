@@ -6,7 +6,7 @@ from nodo import *
 
 from tablero import *
 
-TAMVENTANA = 4
+NODOS = 0
 
 
 # busca en col la primera celda vacía
@@ -44,45 +44,31 @@ def possibleSolutions(nodo):
     return nodosSiguientes
 
 
-def minimax(nodo, profundidad, maxi):
+def minimax(nodo, profundidad, maxi, nodosVisitados):
     nodo.setNodoSiguientes(possibleSolutions(nodo))
     if profundidad == 0 or nodo.getTablero().cuatroEnRaya():
-        print("Profundidad 0 ")
-        print("Nodo Valor: ", nodo.getValor())
         return nodo
     if maxi:
         value = - math.inf
         for child in nodo.getNodosSiguientes():
-            leaf = minimax(child, profundidad - 1, child.getIsMaxi())
+            nodosVisitados.append(child)
+            leaf = minimax(child, profundidad - 1, child.getIsMaxi(), nodosVisitados)
             evalu = evaluation(leaf)
-            print("max")
-            print("evalu: ", evalu)
             if value < evalu:
-                print("Entra un valor: ")
-                print(nodo)
                 value = evalu
                 nodo.setValor(value)
             leaf.setValor(evalu)
-            print("value: ", value)
-
-        print("=========================Termino FAMILIA===================================")
         return nodo
     else:
         value = math.inf
         for child in nodo.getNodosSiguientes():
-            leaf = minimax(child, profundidad - 1, child.getIsMaxi())
+            nodosVisitados.append(child)
+            leaf = minimax(child, profundidad - 1, child.getIsMaxi(), nodosVisitados)
             evalu = evaluation(leaf)
-            print("min")
-            print("evalu: ", evalu)
             if value > evalu:
-                print("Entra un valor: ")
-                print(nodo)
                 value = evalu
                 nodo.setValor(value)
             leaf.setValor(evalu)
-            print("value: ", value)
-
-        print("=========================Termino FAMILIA===================================")
         return nodo
 
 
@@ -96,35 +82,33 @@ def evaluation(nodo):
         opp = 1
         turno = 2
 
-    # puntuacion centro
-    colCentro = [int(i) for i in list(tablero[:, nodo.getTablero().getAncho()//2])]
-    contCentro = colCentro.count(turno)
-    puntuacion += contCentro * 3
-
-    # posicion Horizontal
     for r in range(nodo.getTablero().getAlto()):
-        renglon = [int(i) for i in list(tablero[r, :])]
+        fila = [int(i) for i in list(tablero[r, :])]
         for c in range(nodo.getTablero().getAncho() - 3):
-            ventana = renglon[c:c + TAMVENTANA]
-            puntuacion += evaluarVentana(ventana, turno, opp)
+            filas = fila[c:c + 4]
+            puntuacion += calcularValor(filas, turno, opp)
 
     # puntuacion Vertical
     for c in range(nodo.getTablero().getAncho()):
         columna = [int(i) for i in list(tablero[:, c])]
         for r in range(nodo.getTablero().getAlto() - 3):
-            ventana = columna[r:r + TAMVENTANA]
-            puntuacion += evaluarVentana(ventana, turno, opp)
+            columnas = columna[r:r + 4]
+            puntuacion += calcularValor(columnas, turno, opp)
 
     # puntuacion diagonales
     for r in range(nodo.getTablero().getAlto() - 3):
         for c in range(nodo.getTablero().getAncho() - 3):
-            ventana = [tablero[r + i][c + i] for i in range(TAMVENTANA)]
-            puntuacion += evaluarVentana(ventana, turno, opp)
+            diagonales = [tablero[r + i][c + i] for i in range(4)]
+            puntuacion += calcularValor(diagonales, turno, opp)
 
     for r in range(nodo.getTablero().getAlto() - 3):
         for c in range(nodo.getTablero().getAncho() - 3):
-            ventana = [tablero[r + 3 - i][c + i] for i in range(TAMVENTANA)]
-            puntuacion += evaluarVentana(ventana, turno, opp)
+            diagnoales_der = [tablero[r + 3 - i][c + i] for i in range(4)]
+            puntuacion += calcularValor(diagnoales_der, turno, opp)
+
+    centro = [int(i) for i in list(tablero[:, nodo.getTablero().getAncho()//2])]
+    cantidadPiezasCentro = centro.count(turno)
+    puntuacion += cantidadPiezasCentro * 3
 
     return puntuacion
 
@@ -137,9 +121,18 @@ def transformarTablero(nodo):
     return tablero
 
 
-def evaluarVentana(window, pieza, opp):
+def calcularValor(window, pieza, opp):
     puntuacion = 0
-    if pieza == 2:
+    if pieza == 1:
+        if window.count(pieza) == 4:
+            puntuacion -= 100
+        elif window.count(pieza) == 3 and window.count(0) == 1:
+            puntuacion -= 2
+        elif window.count(pieza) == 2 and window.count(0) == 2:
+            puntuacion -= 1
+        if window.count(opp) == 3 and window.count(0) == 1:
+            puntuacion += 100
+    else:
         if window.count(pieza) == 4:
             puntuacion += 1000
         elif window.count(pieza) == 3 and window.count(0) == 1:
@@ -150,13 +143,20 @@ def evaluarVentana(window, pieza, opp):
             puntuacion -= 10
         if window.count(opp) == 2 and window.count(0) == 2:
             puntuacion -= 5
-    else:
-        if window.count(pieza) == 4:
-            puntuacion -= 100
-        elif window.count(pieza) == 3 and window.count(0) == 1:
-            puntuacion -= 2
-        elif window.count(pieza) == 2 and window.count(0) == 2:
-            puntuacion -= 1
-        if window.count(opp) == 3 and window.count(0) == 1:
-            puntuacion += 100
     return puntuacion
+
+'''
+
+def calcularValor(window, pieza, opp):
+    puntuacion = 0
+    if window.count(pieza) == 4:
+        puntuacion += 100
+    elif window.count(pieza) == 3 and window.count(0) == 1:
+        puntuacion += 5
+    elif window.count(pieza) == 2 and window.count(0) == 2:
+        puntuacion += 2
+    if window.count(opp) == 3 and window.count(0) == 1:
+        puntuacion -= 4
+    return puntuacion
+
+'''

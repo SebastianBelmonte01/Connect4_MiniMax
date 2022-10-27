@@ -3,6 +3,7 @@ from tablero import *
 from algoritmo import *
 from pygame.locals import *
 from arbol import *
+import time
 
 MARGEN = 20
 ROJO = (255, 0, 0)
@@ -13,7 +14,6 @@ BLANCO = (255, 255, 255)
 NARANJA = (254, 115, 28)
 TAM = 60
 
-
 def main():
     pygame.init()
 
@@ -22,9 +22,10 @@ def main():
     pygame.display.set_caption("Belmonte Sebastian - Practica 1")
 
     # Intancia de Arbol
-    arbol = Arbol(4)
+    arbol = Arbol(1)
     # Nodo Actual
     nodoRaiz = None
+
     # Nodo Anterior
     nuevo = None
     next_move = 0
@@ -44,16 +45,26 @@ def main():
                 # comprobar que es una posición válida
                 fila = busca(tablero, colDestino)
                 if fila != -1:
+                    nodosVisitados = []
                     # Si el arbol esta vacio se le agreaga el nodo raiz
                     tablero.setCelda(fila, colDestino, 1)
                     nodoRaiz = Nodo(tablero, True, fila, col)
                     arbol.setNodoRaiz(nodoRaiz)
                     # arbol.getNodoRaiz().setNodoSiguientes(possibleSolutions(nodoRaiz))
-                    minimax(nodoRaiz, arbol.getProfundiad(), nodoRaiz.getIsMaxi())
+
+                    inicio = time.time()
+                    minimax(nodoRaiz, arbol.getProfundiad(), nodoRaiz.getIsMaxi(), nodosVisitados)
                     next_move = arbol.siguienteMovimiento()
                     print("Nodo RAIZ VALOR: ", nodoRaiz.getValor())
                     nodoRaiz = nodoRaiz.getNodoSiguientes(next_move)
-                    print(nodoRaiz.getTablero())
+                    #print(nodoRaiz.getTablero())
+                    fin = time.time()
+
+                    print("Tiempo transcurrido: ")
+                    print(fin-inicio)
+                    print("Nodos visitados")
+                    print(len(nodosVisitados)+1)
+                    print("=========================Termino FAMILIA===================================")
 
                 if tablero.cuatroEnRaya() == 1:
                     game_over = True
